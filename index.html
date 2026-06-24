@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Aero Portfolio</title>
+    <title>ash777</title>
     <style>
-        /* 1. The Frutiger Aero Background */
+        /* ── Windows 7 "Harmony" wallpaper (radial) ── */
         body {
             margin: 0;
             padding: 0;
@@ -13,130 +13,326 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0072ff 0%, #00c6ff 50%, #56ab2f 100%);
-            background-attachment: fixed;
+            font-family: 'Segoe UI', 'Segoe UI Variable', Tahoma, sans-serif;
+            background:
+                radial-gradient(ellipse at 55% 120%, #001d0a 0%, #002f12 15%, transparent 50%),
+                radial-gradient(ellipse at 85% 70%, #00663d 0%, #00994d 25%, transparent 55%),
+                radial-gradient(ellipse at 20% 65%, #01764b 0%, #00a55a 20%, transparent 45%),
+                radial-gradient(ellipse at 50% 85%, #00b894 15%, #00d68f 40%, transparent 60%),
+                radial-gradient(ellipse at 50% 50%, #a8ffd0 0%, #00e6a0 18%, #00c080 35%, #00684a 55%, #002a1c 75%, #000d08 100%);
             overflow: hidden;
+            user-select: none;
         }
 
-        /* 2. The Core Aero Glass Window Frame */
+        /* ── Wallpaper "DNA" swoosh overlay ── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 160% 50% at 40% 20%, rgba(180, 255, 220, 0.25) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* ── Aero Glass Window Frame ── */
         .aero-window {
-            width: 550px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.45);
-            box-shadow: 
-                0 0 0 1px rgba(0, 0, 0, 0.1),
-                0 15px 35px rgba(0, 0, 0, 0.35),
-                inset 0 1px 0 rgba(255, 255, 255, 0.6);
-            /* This creates the frosted blur background effect */
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 5px;
+            width: 560px;
+            min-height: 280px;
             position: relative;
+            border-radius: 8px;
+            padding: 5px;
+            /* outer glow (DWM) */
+            box-shadow:
+                0 0 0 1px rgba(255, 255, 255, 0.25),
+                0 0 12px rgba(120, 220, 255, 0.25),
+                0 8px 32px rgba(0, 0, 0, 0.55);
+            /* glass blur + colorization tint (Win7 default cyan/teal) */
+            background: rgba(90, 180, 220, 0.20);
+            backdrop-filter: blur(18px) saturate(1.3);
+            -webkit-backdrop-filter: blur(18px) saturate(1.3);
         }
 
-        /* 3. The Glossy Windows 7 Title Bar */
+        /* ── Glass "colorization" overlay (the colored-glass tint) ── */
+        .aero-window::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 8px;
+            background: linear-gradient(135deg,
+                rgba(100, 200, 255, 0.13) 0%,
+                rgba(80, 170, 230, 0.08) 50%,
+                rgba(60, 150, 200, 0.12) 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── Glass diagonal shine / specular highlight ── */
+        .aero-window::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 8px;
+            background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.45) 0%,
+                rgba(255, 255, 255, 0.20) 15%,
+                rgba(255, 255, 255, 0.00) 35%,
+                rgba(255, 255, 255, 0.00) 65%,
+                rgba(255, 255, 255, 0.10) 85%,
+                rgba(255, 255, 255, 0.00) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* ── Title bar (lives IN the glass) ── */
         .title-bar {
+            position: relative;
+            z-index: 1;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 6px 10px 8px 10px;
-            /* Linear gradient mirroring light striking reflective plastic */
-            background: linear-gradient(to bottom, 
-                rgba(255,255,255,0.3) 0%, 
-                rgba(255,255,255,0.1) 50%, 
-                rgba(0,0,0,0.05) 51%, 
-                rgba(255,255,255,0.1) 100%);
+            padding: 7px 8px 6px 14px;
             border-radius: 4px 4px 0 0;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 1px 2px rgba(0,0,0,0.2);
+            /* subtle title-bar-only highlight gradient */
+            background: linear-gradient(to bottom,
+                rgba(255, 255, 255, 0.18) 0%,
+                rgba(255, 255, 255, 0.05) 70%,
+                transparent 100%);
+            color: white;
+            text-shadow:
+                0 0 12px rgba(255, 255, 255, 0.6),
+                0 1px 3px rgba(0, 0, 0, 0.55);
+            font-size: 13px;
             font-weight: 600;
-            color: #1e293b;
+            letter-spacing: 0.2px;
         }
 
-        /* 4. Windows 7 Style Minimize/Maximize/Close Buttons */
+        /* ── Window control buttons ── */
         .window-controls {
             display: flex;
             gap: 4px;
         }
 
         .btn {
-            width: 28px;
+            position: relative;
+            width: 30px;
             height: 18px;
-            border: 1px solid rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.35);
             border-radius: 3px;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.4), rgba(0,0,0,0.1));
+            background: linear-gradient(to bottom,
+                rgba(255, 255, 255, 0.30) 0%,
+                rgba(255, 255, 255, 0.08) 50%,
+                rgba(0, 0, 0, 0.06) 51%,
+                rgba(255, 255, 255, 0.10) 100%);
             cursor: pointer;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.50),
+                0 1px 2px rgba(0, 0, 0, 0.25);
+            transition: background 0.12s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .btn-close {
-            background: linear-gradient(to bottom, #f87171, #dc2626);
-            border: 1px solid #991b1b;
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 2px;
+            pointer-events: none;
         }
 
-        .btn:hover {
-            filter: brightness(1.2);
+        /* ── Minimize icon (flat line) ── */
+        .btn-min::before {
+            content: '';
+            width: 10px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 3px rgba(255,255,255,0.6);
+            display: block;
         }
 
-        /* 5. Clean Interior App Content Container */
+        /* ── Maximize icon (outlined square) ── */
+        .btn-max::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.95);
+            border-radius: 1px;
+            box-shadow: 0 0 3px rgba(255,255,255,0.6);
+            display: block;
+        }
+
+        /* ── Close icon (X) ── */
+        .btn-close::before,
+        .btn-close::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 3px rgba(255,255,255,0.6);
+            border-radius: 1px;
+        }
+        .btn-close::before { transform: rotate(45deg); }
+        .btn-close::after  { transform: rotate(-45deg); }
+
+        /* ── Hover states ── */
+        .btn:not(.btn-close):hover {
+            background: linear-gradient(to bottom,
+                rgba(255, 255, 255, 0.50) 0%,
+                rgba(255, 255, 255, 0.20) 100%);
+        }
+        .btn:not(.btn-close):active {
+            background: linear-gradient(to bottom,
+                rgba(255, 255, 255, 0.15) 0%,
+                rgba(255, 255, 255, 0.35) 100%);
+        }
+
+        /* Close button: only turns red ON HOVER (authentic Win7) */
+        .btn-close:hover {
+            background: linear-gradient(to bottom, #e04343 0%, #b02020 100%);
+            border-color: rgba(180, 20, 20, 0.8);
+        }
+        .btn-close:hover::before,
+        .btn-close:hover::after {
+            background: white;
+            box-shadow: 0 0 4px rgba(255,255,255,0.8);
+        }
+        .btn-close:active {
+            background: linear-gradient(to bottom, #902020 0%, #701818 100%);
+        }
+
+        /* ── Content area ── */
         .window-content {
-            background: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(0, 0, 0, 0.15);
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(255, 255, 255, 0.50);
+            border-top: 1px solid rgba(255, 255, 255, 0.70);
             border-radius: 0 0 4px 4px;
-            padding: 25px;
-            min-height: 200px;
-            color: #334155;
+            padding: 28px 32px;
+            color: #2c3e50;
+            min-height: 180px;
+            box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.03);
         }
 
         h1 {
-            margin-top: 0;
-            color: #0369a1;
-            font-size: 24px;
+            margin: 0 0 8px 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a3a4a;
+            letter-spacing: -0.2px;
         }
 
-        /* 6. Frutiger Aero Vibrant Glass Accent Button */
+        .window-content p {
+            margin: 10px 0 16px 0;
+            font-size: 13.5px;
+            line-height: 1.55;
+            color: #3d5567;
+        }
+
+        code {
+            background: #e8edf2;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-size: 12.5px;
+            color: #1a5276;
+        }
+
+        /* ── Aero-style button (Win7 dialog style, not pill) ── */
         .aero-btn {
-            background: linear-gradient(to bottom, #38bdf8 0%, #0284c7 49%, #0369a1 50%, #075985 100%);
-            color: white;
-            border: 1px solid #0369a1;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: bold;
+            background: linear-gradient(to bottom, #f0f5fa 0%, #d9e3ec 49%, #c5d3e0 50%, #dae5ef 100%);
+            color: #1e3a5f;
+            border: 1px solid #7a9eb8;
+            padding: 6px 22px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.4), inset 0 1px 0 rgba(255,255,255,0.4);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
-            transition: transform 0.1s;
+            box-shadow:
+                0 1px 0 rgba(255,255,255,0.8) inset,
+                0 1px 2px rgba(0,0,0,0.15);
+            text-shadow: 0 1px 0 rgba(255,255,255,0.7);
+            transition: none;
+            font-family: inherit;
+        }
+        .aero-btn:hover {
+            background: linear-gradient(to bottom, #eaf1f9 0%, #c8d9eb 49%, #b2c9df 50%, #c8d9eb 100%);
+            border-color: #4a7ca8;
+        }
+        .aero-btn:active {
+            background: linear-gradient(to bottom, #b8c9da 0%, #b8c9da 100%);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+            transform: translateY(1px);
         }
 
-        .aero-btn:hover {
-            filter: brightness(1.15);
-            box-shadow: 0 6px 15px rgba(2, 132, 199, 0.6), inset 0 1px 0 rgba(255,255,255,0.4);
+        /* ── Aero separator line ── */
+        hr {
+            border: none;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            margin: 16px 0;
         }
-        
-        .aero-btn:active {
-            transform: scale(0.97);
+
+        /* ── Subtle decorative "bubble" (Frutiger Aero touch) ── */
+        .bubble {
+            position: fixed;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%,
+                rgba(255, 255, 255, 0.25) 0%,
+                rgba(200, 240, 255, 0.10) 40%,
+                transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .bubble-1 { width: 180px; height: 180px; top: 5%; left: 8%; }
+        .bubble-2 { width: 100px; height: 100px; bottom: 12%; right: 15%; }
+        .bubble-3 { width: 60px; height: 60px; top: 50%; left: 75%; }
+
+        /* ── Light reflection line (like DWM reflection) in glass bottom ── */
+        .glass-reflection {
+            position: absolute;
+            bottom: 3px;
+            left: 8px;
+            right: 8px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.10);
+            border-radius: 1px;
+            z-index: 1;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
 
-    <!-- The Reusable Window Component Structure -->
+    <!-- Frutiger Aero decorative bubbles -->
+    <div class="bubble bubble-1"></div>
+    <div class="bubble bubble-2"></div>
+    <div class="bubble bubble-3"></div>
+
+    <!-- The Aero Window -->
     <div class="aero-window">
         <div class="title-bar">
-            <span>Computer - Welcome</span>
+            <span>ash777 — Personal Workspace</span>
             <div class="window-controls">
-                <button class="btn"></button>
-                <button class="btn"></button>
-                <button class="btn btn-close"></button>
+                <button class="btn btn-min" aria-label="Minimize"></button>
+                <button class="btn btn-max" aria-label="Maximize"></button>
+                <button class="btn btn-close" aria-label="Close"></button>
             </div>
         </div>
         <div class="window-content">
-            <h1>Welcome to my Aero Domain</h1>
-            <p>This layout uses advanced CSS <code>backdrop-filter</code> engines to dynamically blur the gradient behind the panel, perfectly recreating the 2007 Windows 7 Aero architecture.</p>
-            <br>
-            <button class="aero-btn" onclick="alert('System Operational!')">Explore Projects</button>
+            <h1>Welcome to ash777</h1>
+            <p>This window is rendered with <code>backdrop-filter</code> blur, a DWM-style glow shadow,
+            and a glass colorization tint — recreating the Windows&nbsp;7 Aero glass frame
+            that defined the Frutiger Aero era.</p>
+
+            <hr>
+
+            <p style="margin-bottom: 18px;">Built with the authentic glass aesthetic:
+            translucent chrome, specular highlights, and the Harmony wallpaper gradient.</p>
+
+            <button class="aero-btn" onclick="alert('System operational.'); this.blur();">Explore Projects</button>
         </div>
+        <div class="glass-reflection"></div>
     </div>
 
 </body>
