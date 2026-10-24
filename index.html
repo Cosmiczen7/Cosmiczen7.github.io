@@ -1,125 +1,134 @@
-<html>
-    <head>
-        <title>Website of Ash777!</title>
-        <style>
-            /* ── full-screen canvas ── */
-            body {
-                margin: 0;
-                min-height: 100vh;
-                background-image: url('assets/blue_back.jpg');
-                background-size: cover;
-                background-position: center;
-                background-attachment: fixed;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                font-family: 'Segoe UI', system-ui, sans-serif;
-            }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to ash777's website!</title>
+  <link rel="stylesheet" href="assets/css/style.css?v=3">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%230099ff%22 stroke=%22white%22 stroke-width=%228%22/><circle cx=%2238%22 cy=%2236%22 r=%2216%22 fill=%22rgba(255,255,255,0.7)%22/></svg>">
+</head>
+<body>
 
-            /* ── frosted glass dashboard ── */
-            .dashboard {
-                background: rgba(255, 255, 255, 0.12);
-                backdrop-filter: blur(14px);
-                -webkit-backdrop-filter: blur(14px);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                border-radius: 16px;
-                padding: 36px 48px;
-                text-align: center;
-                box-shadow:
-                    0 8px 32px rgba(0, 0, 0, 0.1),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.25);
-            }
+  <!-- SVG Optical Refraction Filter from liqui-design (feDisplacementMap) -->
+  <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
+    <filter id="button-liquid-filter" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" result="noise" />
+      <feGaussianBlur in="noise" stdDeviation="8" result="smoothedNoise" />
+      <feDisplacementMap in="SourceGraphic" in2="smoothedNoise" scale="22" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+  </svg>
 
-            .dashboard h1 {
-                font-weight: 500;
-                font-size: 1.6rem;
-                color: #fff;
-                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-                letter-spacing: 0.3px;
-                margin: 0 0 12px;
-            }
+  <!-- Windows 7 Wallpaper Slideshow Engine -->
+  <div id="wallpaper-engine" aria-hidden="true">
+    <div id="slide-a" class="wallpaper-slide active" style="background-image: url('assets/blue_back.jpg');"></div>
+    <div id="slide-b" class="wallpaper-slide inactive"></div>
+  </div>
+  <div id="wallpaper-sheen" aria-hidden="true"></div>
 
-            /* ── clear glass buttons ── */
-            .clear-btn {
-                position: relative;
-                z-index: 0;
-                background: transparent;
-                border: 1px solid rgba(255, 255, 255, 0.4);
-                border-radius: 999px;
-                padding: 12px 32px;
-                color: #fff;
-                font-family: inherit;
-                font-size: 0.95rem;
-                cursor: pointer;
-                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-                transition: box-shadow 0.2s ease, transform 0.2s ease;
-            }
+  <!-- Main Page Structure -->
+  <div class="page-wrapper">
 
-            /* background image — pinned to viewport so it aligns with body */
-            .clear-btn::before {
-                content: '';
-                position: absolute;
-                inset: 0;
-                border-radius: 999px;
-                z-index: -2;
-                background-image: url('assets/blue_back.jpg');
-                background-attachment: fixed;
-                background-size: cover;
-                background-position: center;
-                pointer-events: none;
-            }
+    <!-- Top Simple Title -->
+    <header class="site-header">
+      <h1 class="site-title">Welcome to ash777's website!</h1>
+      <p class="site-subtitle">Frutiger Aero × Liquid Glass • ash777.me</p>
+    </header>
 
-            /* glass overlay — smooth opacity/color transition */
-            .clear-btn::after {
-                content: '';
-                position: absolute;
-                inset: 0;
-                border-radius: 999px;
-                z-index: -1;
-                background: rgba(255, 255, 255, 0.22);
-                box-shadow:
-                    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-                    inset 0 -2px 0 rgba(255, 255, 255, 0.08);
-                pointer-events: none;
-                transition: background 0.2s ease, box-shadow 0.2s ease;
-            }
+    <!-- Heavily Frosted Dense Ribbon Bar with Clear Raised Liquid Glass Buttons -->
+    <nav class="ribbon-container" aria-label="Main Navigation">
+      <div class="dense-glass-ribbon">
+        <a href="about.html" class="liquid-raised-btn">
+          <span>About me</span>
+        </a>
+        <a href="projects.html" class="liquid-raised-btn">
+          <span>My projects</span>
+        </a>
+        <a href="resume.html" class="liquid-raised-btn">
+          <span>My resume</span>
+        </a>
+        <a href="fun.html" class="liquid-raised-btn">
+          <span>Fun stuff</span>
+        </a>
+      </div>
+    </nav>
 
-            .clear-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 22px rgba(0, 0, 0, 0.15);
-            }
-            .clear-btn:hover::after {
-                background: rgba(255, 255, 255, 0.38);
-                box-shadow:
-                    inset 0 1px 0 rgba(255, 255, 255, 0.85),
-                    inset 0 -2px 0 rgba(255, 255, 255, 0.15);
-            }
-
-            .clear-btn:active {
-                transform: translateY(0);
-            }
-            .clear-btn:active::after {
-                background: rgba(255, 255, 255, 0.16);
-            }
-
-            .button-row {
-                display: flex;
-                gap: 14px;
-                justify-content: center;
-            }
-
-            a { text-decoration: none; }
-        </style>
-    </head>
-    <body>
-        <div class="dashboard">
-            <h1> Welcome to Ash777's website </h1>
-            <div class="button-row">
-                <a href="about.html"><button class="clear-btn">About</button></a>
-                <button class="clear-btn">Something</button>
-            </div>
+    <!-- Simple Blog-Style Place for Writing (Slightly frosted glass for readability) -->
+    <main class="content-wrapper">
+      <article class="frosted-blog-card">
+        <div class="card-header-bar">
+          <div class="card-title-group">
+            <h2>Welcome to my corner of the web</h2>
+          </div>
+          <span class="card-badge">Personal Blog</span>
         </div>
-    </body>
+
+        <p>
+          Hey there! Welcome to my personal space on the internet. I've built this site as a throwback to the tactile, optimistic days of <strong>Frutiger Aero</strong> and <strong>Windows 7 Aero Glass</strong>, fused with modern <strong>Apple-style liquid glass</strong> refraction.
+        </p>
+
+        <div class="aero-callout">
+          <p>
+            <strong>Note from Ash:</strong> I don't have much written here just yet, but this will be my central hub for publishing thoughts, blog posts, creative coding projects, and random discoveries.
+          </p>
+        </div>
+
+        <p>
+          Take a look around! The desktop wallpaper in the background automatically cycles through classic Aero wallpapers just like Windows 7 used to. Over on the side, you'll find an embedded <strong>Webamp</strong> player rocking retro tunes—you can drag it around, tweak the equalizer, or pick your favorite tracks.
+        </p>
+
+        <p>
+          Feel free to explore the buttons in the ribbon bar above to check out upcoming sections. More updates and writings are coming soon!
+        </p>
+      </article>
+    </main>
+
+    <!-- Glass Footer -->
+    <footer class="site-footer" role="contentinfo">
+      <div class="footer-left">
+        <span class="footer-brand">ash777.me</span>
+        <div class="footer-icons">
+          <!-- GitHub Icon -->
+          <a href="https://github.com/Cosmiczen7" target="_blank" rel="noopener noreferrer" class="footer-icon-link" title="GitHub">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+          </a>
+          <!-- Mail Icon -->
+          <a href="mailto:ash@ash777.me" class="footer-icon-link" title="Contact Email">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-right">
+        <!-- Manual Wallpaper Switcher Button -->
+        <button id="footer-next-wallpaper" class="wallpaper-toggle-btn" type="button" title="Switch Wallpaper">
+          <span>🖼️</span>
+          <span id="footer-wallpaper-name">Aero Harmony</span>
+          <span>↻</span>
+        </button>
+        <!-- Windows 7 Taskbar Style Clock -->
+        <span id="footer-clock">12:00 PM</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Webamp Container — MUST be outside .page-wrapper for click/drag to work -->
+  <div id="webamp-app"></div>
+
+  <!-- Scripts: Webamp Library from unpkg CDN + Local Initializers -->
+  <script src="https://unpkg.com/webamp@1.4.2/built/webamp.bundle.min.js"></script>
+  <!-- Fallback to local bundle if CDN fails -->
+  <script>
+    if (typeof window.Webamp === 'undefined') {
+      document.write('<script src="assets/js/webamp.bundle.min.js"><\/script>');
+    }
+  </script>
+  <script src="assets/js/slideshow.js"></script>
+  <script src="assets/js/webamp-init.js"></script>
+</body>
 </html>
