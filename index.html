@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Welcome to ash777's website!</title>
-  <link rel="stylesheet" href="assets/css/style.css?v=3">
+  <link rel="stylesheet" href="assets/css/style.css?v=7">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%230099ff%22 stroke=%22white%22 stroke-width=%228%22/><circle cx=%2238%22 cy=%2236%22 r=%2216%22 fill=%22rgba(255,255,255,0.7)%22/></svg>">
 </head>
 <body>
@@ -31,12 +31,12 @@
     <!-- Top Simple Title -->
     <header class="site-header">
       <h1 class="site-title">Welcome to ash777's website!</h1>
-      <p class="site-subtitle">Frutiger Aero × Liquid Glass • ash777.me</p>
     </header>
 
     <!-- Heavily Frosted Dense Ribbon Bar with Clear Raised Liquid Glass Buttons -->
     <nav class="ribbon-container" aria-label="Main Navigation">
       <div class="dense-glass-ribbon">
+        <div class="ribbon-glass-pane" aria-hidden="true"></div>
         <a href="about.html" class="liquid-raised-btn">
           <span>About me</span>
         </a>
@@ -63,21 +63,21 @@
         </div>
 
         <p>
-          Hey there! Welcome to my personal space on the internet. I've built this site as a throwback to the tactile, optimistic days of <strong>Frutiger Aero</strong> and <strong>Windows 7 Aero Glass</strong>, fused with modern <strong>Apple-style liquid glass</strong> refraction.
-        </p>
-
-        <div class="aero-callout">
-          <p>
-            <strong>Note from Ash:</strong> I don't have much written here just yet, but this will be my central hub for publishing thoughts, blog posts, creative coding projects, and random discoveries.
-          </p>
-        </div>
-
-        <p>
-          Take a look around! The desktop wallpaper in the background automatically cycles through classic Aero wallpapers just like Windows 7 used to. Over on the side, you'll find an embedded <strong>Webamp</strong> player rocking retro tunes—you can drag it around, tweak the equalizer, or pick your favorite tracks.
+          Hey there! Welcome to my personal space on the internet. This is just a personal website and a throwback to the nostalgic Win 7 + Frutiger Aero + liquid glass vibes.
         </p>
 
         <p>
-          Feel free to explore the buttons in the ribbon bar above to check out upcoming sections. More updates and writings are coming soon!
+          To be honest, nothing much to write here yet. Well here is some <strong>Shiny text</strong>
+        </p>
+
+        <p>
+        I'll probably (might) add something in the future, <strong>(slowly and when i feel like it)</strong>
+        But Hey, thanks for visitng my corner of the internet... theres also webamp in the corner...
+        </p>
+
+        <p>
+        See you later!
+        <strong>Ash777</strong>
         </p>
       </article>
     </main>
@@ -120,14 +120,10 @@
   <!-- Webamp Container — MUST be outside .page-wrapper for click/drag to work -->
   <div id="webamp-app"></div>
 
-  <!-- Scripts: Webamp Library from unpkg CDN + Local Initializers -->
-  <script src="https://unpkg.com/webamp@1.4.2/built/webamp.bundle.min.js"></script>
-  <!-- Fallback to local bundle if CDN fails -->
-  <script>
-    if (typeof window.Webamp === 'undefined') {
-      document.write('<script src="assets/js/webamp.bundle.min.js"><\/script>');
-    }
-  </script>
+  <!-- Webamp Library from local bundle (guaranteed offline & fast) -->
+  <script src="assets/skins/xmms_turquoise_data.js"></script>
+  <script src="assets/js/webamp.bundle.min.js"></script>
+  <script src="assets/js/ribbon-cutout.js"></script>
   <script src="assets/js/slideshow.js"></script>
   <script src="assets/js/webamp-init.js"></script>
 </body>

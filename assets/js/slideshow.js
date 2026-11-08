@@ -16,7 +16,7 @@
 
   let currentIndex = 0;
   let intervalTimer = null;
-  const SLIDE_DURATION = 9000; // 9 seconds per wallpaper
+  const SLIDE_DURATION = 60000; // 60 seconds (1 minute) per wallpaper
 
   // Preload images into browser cache so transitions are seamless
   function preloadWallpapers() {
