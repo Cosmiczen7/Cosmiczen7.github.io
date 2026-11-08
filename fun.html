@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fun stuff • ash777's website</title>
+  <link rel="stylesheet" href="assets/css/style.css?v=7">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%230099ff%22 stroke=%22white%22 stroke-width=%228%22/><circle cx=%2238%22 cy=%2236%22 r=%2216%22 fill=%22rgba(255,255,255,0.7)%22/></svg>">
+</head>
+<body>
+
+  <!-- SVG Optical Refraction Filter from liqui-design -->
+  <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
+    <filter id="button-liquid-filter" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" result="noise" />
+      <feGaussianBlur in="noise" stdDeviation="8" result="smoothedNoise" />
+      <feDisplacementMap in="SourceGraphic" in2="smoothedNoise" scale="22" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+  </svg>
+
+  <!-- Windows 7 Wallpaper Slideshow Engine -->
+  <div id="wallpaper-engine" aria-hidden="true">
+    <div id="slide-a" class="wallpaper-slide active" style="background-image: url('assets/blue_back.jpg');"></div>
+    <div id="slide-b" class="wallpaper-slide inactive"></div>
+  </div>
+  <div id="wallpaper-sheen" aria-hidden="true"></div>
+
+  <!-- Page Wrapper -->
+  <div class="page-wrapper">
+
+    <!-- Top Title -->
+    <header class="site-header">
+      <h1 class="site-title"><a href="index.html" style="color: inherit; text-decoration: none;">Welcome to ash777's website!</a></h1>
+    </header>
+
+    <!-- Ribbon Bar -->
+    <nav class="ribbon-container" aria-label="Main Navigation">
+      <div class="dense-glass-ribbon">
+        <div class="ribbon-glass-pane" aria-hidden="true"></div>
+        <a href="about.html" class="liquid-raised-btn">
+          <span>About me</span>
+        </a>
+        <a href="projects.html" class="liquid-raised-btn">
+          <span>My projects</span>
+        </a>
+        <a href="resume.html" class="liquid-raised-btn">
+          <span>My resume</span>
+        </a>
+        <a href="fun.html" class="liquid-raised-btn active-page">
+          <span>Fun stuff</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- Stub Content -->
+    <main class="content-wrapper">
+      <div class="frosted-blog-card stub-card">
+        <span class="stub-icon">🎮</span>
+        <h2>Fun stuff</h2>
+        <p>
+          This page is currently under construction. Nostalgic mini-games, retro widgets, and digital toys will be playable here soon!
+        </p>
+        <a href="index.html" class="back-home-btn">← Back to Home</a>
+      </div>
+    </main>
+
+    <!-- Glass Footer -->
+    <footer class="site-footer" role="contentinfo">
+      <div class="footer-left">
+        <span class="footer-brand">ash777.me</span>
+        <div class="footer-icons">
+          <a href="https://github.com/Cosmiczen7" target="_blank" rel="noopener noreferrer" class="footer-icon-link" title="GitHub">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+          </a>
+          <a href="mailto:ash@ash777.me" class="footer-icon-link" title="Contact Email">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-right">
+        <button id="footer-next-wallpaper" class="wallpaper-toggle-btn" type="button" title="Switch Wallpaper">
+          <span>🖼️</span>
+          <span id="footer-wallpaper-name">Aero Harmony</span>
+          <span>↻</span>
+        </button>
+        <span id="footer-clock">12:00 PM</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="assets/js/ribbon-cutout.js"></script>
+  <script src="assets/js/slideshow.js"></script>
+</body>
+</html>
