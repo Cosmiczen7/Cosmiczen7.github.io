@@ -3,20 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to ash777's website!</title>
-  <link rel="stylesheet" href="assets/css/style.css?v=7">
+  <title>Welcome to Ash777's Website!</title>
+  <link rel="stylesheet" href="assets/css/style.css?v=9">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%230099ff%22 stroke=%22white%22 stroke-width=%228%22/><circle cx=%2238%22 cy=%2236%22 r=%2216%22 fill=%22rgba(255,255,255,0.7)%22/></svg>">
 </head>
 <body>
-
-  <!-- SVG Optical Refraction Filter from liqui-design (feDisplacementMap) -->
-  <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
-    <filter id="button-liquid-filter" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
-      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" result="noise" />
-      <feGaussianBlur in="noise" stdDeviation="8" result="smoothedNoise" />
-      <feDisplacementMap in="SourceGraphic" in2="smoothedNoise" scale="22" xChannelSelector="R" yChannelSelector="G" />
-    </filter>
-  </svg>
 
   <!-- Windows 7 Wallpaper Slideshow Engine -->
   <div id="wallpaper-engine" aria-hidden="true">
@@ -30,7 +21,7 @@
 
     <!-- Top Simple Title -->
     <header class="site-header">
-      <h1 class="site-title">Welcome to ash777's website!</h1>
+      <h1 class="site-title"><a href="index.html">Welcome to <strong>Ash777's</strong> Website!</a></h1>
     </header>
 
     <!-- Heavily Frosted Dense Ribbon Bar with Clear Raised Liquid Glass Buttons -->
@@ -59,7 +50,7 @@
           <div class="card-title-group">
             <h2>Welcome to my corner of the web</h2>
           </div>
-          <span class="card-badge">Personal Blog</span>
+          <span class="card-badge">Under construction</span>
         </div>
 
         <p>
@@ -104,11 +95,16 @@
       </div>
 
       <div class="footer-right">
+        <!-- Glass refraction toggle: hidden until glass.js confirms the browser supports it -->
+        <button id="footer-refraction-toggle" class="wallpaper-toggle-btn" type="button" aria-pressed="true" title="Toggle glass refraction (Chrome/Edge only)" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M8 10a5 5 0 0 1 4-3"/></svg>
+          <span id="footer-refraction-label">Refraction: On</span>
+        </button>
         <!-- Manual Wallpaper Switcher Button -->
         <button id="footer-next-wallpaper" class="wallpaper-toggle-btn" type="button" title="Switch Wallpaper">
-          <span>🖼️</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 9"/></svg>
           <span id="footer-wallpaper-name">Aero Harmony</span>
-          <span>↻</span>
+          <span aria-hidden="true">↻</span>
         </button>
         <!-- Windows 7 Taskbar Style Clock -->
         <span id="footer-clock">12:00 PM</span>
@@ -120,11 +116,11 @@
   <!-- Webamp Container — MUST be outside .page-wrapper for click/drag to work -->
   <div id="webamp-app"></div>
 
-  <!-- Webamp Library from local bundle (guaranteed offline & fast) -->
-  <script src="assets/skins/xmms_turquoise_data.js"></script>
-  <script src="assets/js/webamp.bundle.min.js"></script>
+  <!-- webamp-init.js loads the local Webamp bundle + skin itself (skipped on phones) -->
   <script src="assets/js/ribbon-cutout.js"></script>
   <script src="assets/js/slideshow.js"></script>
+  <script src="assets/js/glass.js"></script>
+  <script src="assets/js/nav-swap.js"></script>
   <script src="assets/js/webamp-init.js"></script>
 </body>
 </html>

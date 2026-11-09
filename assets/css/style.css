@@ -3,15 +3,52 @@
    Implements liqui-design SVG displacement refraction & Windows 7 Aero Glass
    ========================================================================== */
 
+/* Selawik: open (SIL OFL) Segoe UI lookalike, so non-Windows visitors get the Win7 typeface.
+   Windows uses the real 'Segoe UI' first (see --font-family). License in assets/fonts/. */
+@font-face {
+  font-family: 'Selawik';
+  src: url('../fonts/selawik-light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Selawik';
+  src: url('../fonts/selawik-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Selawik';
+  src: url('../fonts/selawik-semibold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Selawik';
+  src: url('../fonts/selawik-bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  --font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, system-ui, sans-serif;
+  --font-family: 'Segoe UI', 'Selawik', -apple-system, BlinkMacSystemFont, Roboto, system-ui, sans-serif;
   --font-mono: 'Cascadia Code', 'Consolas', monospace;
-  
+
   /* Palette */
   --text-dark: #14283b;
   --text-muted: #486277;
   --aero-blue: #0078d7;
   --aero-cyan: #00c3ff;
+
+  /* Glass accents (shared by hover / focus / active / edges) */
+  --glass-glow: rgba(120, 215, 255, 0.6);
+  --glass-glow-strong: rgba(0, 190, 255, 0.55);
+  --focus-ring: rgba(255, 255, 255, 0.95);
+  --taskbar-h: 52px; /* keep in sync with the Webamp dock position in webamp-init.js */
 }
 
 *, *::before, *::after {
@@ -70,6 +107,12 @@ body {
   z-index: 1;
 }
 
+/* Outgoing layer during a crossfade: stays solid underneath while the new image fades in on top. */
+.wallpaper-slide.leaving {
+  opacity: 1;
+  z-index: 1;
+}
+
 /* Subtle aero desktop vignette and light sheen */
 #wallpaper-sheen {
   position: fixed;
@@ -90,29 +133,47 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding-bottom: 0;
+  padding-bottom: var(--taskbar-h); /* room for the fixed taskbar footer */
   z-index: 10;
 }
 
 .site-header {
   text-align: center;
-  padding: 42px 20px 14px;
+  padding: 34px 20px 6px;
   position: relative;
 }
 
+/* Sleek title: light weight (Segoe UI Light on Windows, Selawik Light elsewhere) with the name
+   in semibold. A modest glow, so the thin strokes stay crisp instead of going mushy. */
 .site-title {
   margin: 0;
-  font-size: clamp(2rem, 4.5vw, 3.2rem);
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  background: linear-gradient(180deg, #ffffff 0%, #def2ff 48%, #aee0ff 52%, #e5f6ff 100%);
+  font-size: clamp(1.7rem, 3.8vw, 2.6rem);
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  background: linear-gradient(180deg, #ffffff 0%, #e6f6ff 50%, #bde4ff 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: #ffffff;
-  filter: drop-shadow(0 2px 4px rgba(0, 20, 50, 0.6)) drop-shadow(0 0 16px rgba(120, 210, 255, 0.6));
+  filter: drop-shadow(0 1px 2px rgba(0, 20, 50, 0.55)) drop-shadow(0 0 12px rgba(120, 210, 255, 0.45));
   display: inline-block;
   user-select: none;
+}
+
+.site-title strong {
+  font-weight: 600;
+}
+
+/* The title links home. Colour/fill are inherited from .site-title so the gradient text stays intact. */
+.site-title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-title a:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 6px;
+  border-radius: 6px;
 }
 
 /* ==========================================================================
@@ -122,97 +183,118 @@ body {
 .ribbon-container {
   display: flex;
   justify-content: center;
-  width: 90%;
-  max-width: 1200px;
-  margin: 16px auto 36px;
-  padding: 0;
+  width: auto;
+  margin: 10px auto 30px;
+  padding: 0 12px;
   position: relative;
   z-index: 20;
 }
 
-/* Heavily frosted dense realistic glass ribbon bar container */
+/* Sleek capsule: hugs its buttons, fully rounded, thin frame (was a full-width slab). */
 .dense-glass-ribbon {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
-  gap: 18px;
-  width: 100%;
-  padding: 14px 24px;
-  border-radius: 16px;
-  flex-wrap: wrap;
-  min-height: 72px;
-  
-  /* Outer frame styling & deep realistic Aero glass shadow */
-  border: 1.5px solid rgba(255, 255, 255, 0.70);
-  box-shadow: 
-    0 18px 45px -8px rgba(0, 25, 65, 0.45),
-    0 4px 16px rgba(0, 0, 0, 0.15),
+  justify-content: center;
+  gap: 8px;
+  padding: 8px; /* a little glass margin around the buttons so the texture has room to show */
+  border-radius: 999px;
+
+  /* Outer frame styling & realistic Aero glass shadow */
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow:
+    0 14px 34px -10px rgba(0, 25, 65, 0.5),
+    0 3px 10px rgba(0, 0, 0, 0.14),
+    0 0 0 1px rgba(0, 25, 65, 0.22),                 /* dark outer hairline: crisp bevel */
     inset 0 1.5px 1px rgba(255, 255, 255, 0.95),
     inset 0 -1.5px 2px rgba(0, 25, 70, 0.25),
-    inset 0 0 24px rgba(255, 255, 255, 0.18);
+    inset 0 -10px 18px -10px rgba(120, 215, 255, 0.3), /* caustic glow pooling at the bottom edge */
+    inset 0 0 18px rgba(255, 255, 255, 0.16);
 }
 
-/* Frosted glass background pane with dynamic button cutouts */
+/* Textured frosted glass pane (the bar around the buttons). The buttons are punched out of it by
+   ribbon-cutout.js's mask, so they stay clear and refracting while the bar stays frosted.
+   Texture = three tiled, seamless feTurbulence layers (inline SVG; static, rendered once):
+     1. white grain      — the sandblasted / acid-etched surface
+     2. faint blue grain — a second, offset grain that gives the etching depth (a single white
+                           layer reads as glitter; a white-only matte one nearly vanishes)
+     3. soft mottling    — uneven frost density across the pane
+   Tune by editing the numbers in the data-URIs: baseFrequency = grain size; the alpha row of
+   feColorMatrix (first number = strength, last = how sparse). */
 .ribbon-glass-pane {
   position: absolute;
   inset: 0;
-  border-radius: 16px;
+  border-radius: inherit;
   pointer-events: none;
   z-index: 1;
-  
-  /* Very frosted & dense glass */
-  background: linear-gradient(180deg, 
-    rgba(255, 255, 255, 0.38) 0%, 
-    rgba(255, 255, 255, 0.18) 45%, 
-    rgba(210, 242, 255, 0.25) 100%);
-  backdrop-filter: blur(36px) saturate(220%) brightness(1.06);
-  -webkit-backdrop-filter: blur(36px) saturate(220%) brightness(1.06);
+
+  /* Layers, top to bottom: white grain, faint blue grain (gives the etched depth), soft mottling, frost. */
+  background:
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'180'%20height%3D'180'%3E%3Cfilter%20id%3D'g'%20x%3D'0'%20y%3D'0'%20width%3D'100%25'%20height%3D'100%25'%20color-interpolation-filters%3D'sRGB'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'0.8'%20numOctaves%3D'2'%20seed%3D'4'%20stitchTiles%3D'stitch'%2F%3E%3CfeColorMatrix%20values%3D'0%200%200%200%201%20%200%200%200%200%201%20%200%200%200%200%201%20%201.1%200%200%200%20-0.38'%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D'100%25'%20height%3D'100%25'%20filter%3D'url(%23g)'%2F%3E%3C%2Fsvg%3E") 0 0 / 180px 180px,
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'160'%20height%3D'160'%3E%3Cfilter%20id%3D'g'%20x%3D'0'%20y%3D'0'%20width%3D'100%25'%20height%3D'100%25'%20color-interpolation-filters%3D'sRGB'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'0.7'%20numOctaves%3D'2'%20seed%3D'11'%20stitchTiles%3D'stitch'%2F%3E%3CfeColorMatrix%20values%3D'0%200%200%200%200%20%200%200%200%200%200.16%20%200%200%200%200%200.45%20%201.1%200%200%200%20-0.42'%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D'100%25'%20height%3D'100%25'%20filter%3D'url(%23g)'%2F%3E%3C%2Fsvg%3E") 0 0 / 160px 160px,
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'360'%20height%3D'360'%3E%3Cfilter%20id%3D'g'%20x%3D'0'%20y%3D'0'%20width%3D'100%25'%20height%3D'100%25'%20color-interpolation-filters%3D'sRGB'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'0.018'%20numOctaves%3D'3'%20seed%3D'9'%20stitchTiles%3D'stitch'%2F%3E%3CfeColorMatrix%20values%3D'0%200%200%200%201%20%200%200%200%200%201%20%200%200%200%200%201%20%201.8%200%200%200%20-0.7'%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D'100%25'%20height%3D'100%25'%20filter%3D'url(%23g)'%2F%3E%3C%2Fsvg%3E") 0 0 / 360px 360px,
+    linear-gradient(180deg, 
+      rgba(255, 255, 255, 0.42) 0%, 
+      rgba(255, 255, 255, 0.26) 45%, 
+      rgba(210, 242, 255, 0.32) 100%);
+  backdrop-filter: blur(22px) saturate(190%) brightness(1.08);
+  -webkit-backdrop-filter: blur(22px) saturate(190%) brightness(1.08);
 }
 
-/* Top diffuse highlight across ribbon */
+/* Top diffuse highlight across the capsule */
 .ribbon-glass-pane::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 14px;
-  right: 14px;
+  top: 1px;
+  left: 18px;
+  right: 18px;
   height: 45%;
-  border-radius: 14px 14px 0 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border-radius: 999px 999px 0 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.04) 100%);
   pointer-events: none;
 }
 
-/* 
+/* Thin light line along the bottom edge, fading out at both ends */
+.ribbon-glass-pane::after {
+  content: '';
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  pointer-events: none;
+}
+
+/*
    Raised Popping Out Buttons:
    Glass completely removed from buttons & topbar cutout below them.
-   Non-interactive on hovering mouse pointer (no motion/jump).
+   Hover/focus change colour + glow only: NO movement or jumping (deliberate).
 */
 .liquid-raised-btn {
   position: relative;
   z-index: 2;
-  flex: 1;
-  min-width: 130px;
-  max-width: 240px;
+  flex: none;
+  width: 128px; /* equal widths: tidy capsule, and glass.js then builds only ONE refraction filter */
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 11px 18px;
-  border-radius: 10px;
+  padding: 9px 16px;
+  border-radius: 999px; /* pill; ribbon-cutout.js + glass.js read this, never hard-code it */
   font-family: inherit;
-  font-size: 0.96rem;
+  font-size: 0.92rem;
+  letter-spacing: 0.01em;
   font-weight: 600;
   color: #ffffff;
   text-decoration: none;
   cursor: pointer;
   user-select: none;
-  outline: none;
-  
-  /* Steady position - no hover movement */
+
+  /* Steady position - no hover movement; only colour/glow fade in. */
   transform: none;
-  transition: none;
-  
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
   /* Completely clear - NO glass haze, NO backdrop blur */
   background: transparent;
   backdrop-filter: none;
@@ -235,35 +317,81 @@ body {
   overflow: hidden;
 }
 
-/* Button Hover State: non-interactive (no jumping/shifting) */
-.liquid-raised-btn:hover {
-  transform: none;
-  background: transparent;
-  border-color: rgba(255, 255, 255, 0.55);
-  border-top-color: rgba(255, 255, 255, 0.95);
-  box-shadow: 
-    0 4px 10px rgba(0, 15, 45, 0.35),
-    inset 0 1px 1px rgba(255, 255, 255, 0.55);
+/* Layers inside a button: ::before = refraction (backdrop-filter, set by glass.js),
+   label span, ::after = baked rim light (also glass.js). Both pseudos are inert unless
+   refraction is switched on, so the default render is unchanged. */
+.liquid-raised-btn::before,
+.liquid-raised-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
 }
 
-/* Button Active / Clicked */
+.liquid-raised-btn > span {
+  position: relative;
+  z-index: 1;
+}
+
+html[data-refraction="on"] .liquid-raised-btn::before {
+  backdrop-filter: var(--lq-refract);
+  -webkit-backdrop-filter: var(--lq-refract);
+}
+
+html[data-refraction="on"] .liquid-raised-btn::after {
+  z-index: 2;
+  background: var(--lq-specular) center / 100% 100% no-repeat;
+}
+
+/* Hover: a soft sheen and glow, nothing moves */
+.liquid-raised-btn:hover {
+  transform: none;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.20) 0%,
+    rgba(255, 255, 255, 0.04) 55%,
+    rgba(130, 220, 255, 0.14) 100%);
+  border-color: rgba(255, 255, 255, 0.65);
+  border-top-color: rgba(255, 255, 255, 1);
+  box-shadow:
+    0 4px 12px rgba(0, 15, 45, 0.35),
+    0 0 14px var(--glass-glow),
+    inset 0 1px 1px rgba(255, 255, 255, 0.75);
+}
+
+/* Keyboard focus: clear ring + glow (never removed without replacement) */
+.liquid-raised-btn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  box-shadow:
+    0 4px 12px rgba(0, 15, 45, 0.35),
+    0 0 0 5px rgba(0, 195, 255, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.75);
+}
+
+/* Pressed */
 .liquid-raised-btn:active {
   transform: none;
-  box-shadow: 
+  box-shadow:
     0 3px 8px rgba(0, 15, 35, 0.35),
     inset 0 1px 2px rgba(0, 15, 40, 0.4);
   background: rgba(255, 255, 255, 0.06);
 }
 
-/* Active Page Indicator */
-.liquid-raised-btn.active-page {
-  background: rgba(0, 150, 255, 0.16);
-  border-color: rgba(130, 220, 255, 0.55);
-  border-top-color: rgba(180, 240, 255, 0.8);
-  box-shadow: 
+/* Current page: lit from within */
+.liquid-raised-btn.active-page,
+.liquid-raised-btn[aria-current="page"] {
+  background: linear-gradient(180deg,
+    rgba(150, 230, 255, 0.30) 0%,
+    rgba(0, 150, 255, 0.20) 55%,
+    rgba(0, 120, 215, 0.30) 100%);
+  border-color: rgba(130, 220, 255, 0.7);
+  border-top-color: rgba(200, 245, 255, 0.95);
+  box-shadow:
     0 8px 18px rgba(0, 30, 70, 0.45),
-    0 0 14px rgba(0, 180, 255, 0.4),
-    inset 0 1px 1px rgba(255, 255, 255, 0.6);
+    0 0 18px var(--glass-glow-strong),
+    inset 0 1px 1px rgba(255, 255, 255, 0.7),
+    inset 0 -8px 14px -6px rgba(0, 200, 255, 0.5);
 }
 
 /* ==========================================================================
@@ -277,6 +405,13 @@ body {
   position: relative;
   z-index: 5;
   flex: 1; /* Pushes footer naturally to bottom of viewport */
+}
+
+/* nav-swap.js moves focus here after a page swap, and webamp-init.js briefly focuses <body>
+   to reset the Tab starting point; no ring needed on these containers */
+.content-wrapper:focus,
+body:focus {
+  outline: none;
 }
 
 .frosted-blog-card {
@@ -294,13 +429,28 @@ body {
   
   border: 1px solid rgba(255, 255, 255, 0.38);
   border-top: 1px solid rgba(255, 255, 255, 0.7);
-  box-shadow: 
+  box-shadow:
     0 20px 50px -10px rgba(0, 15, 40, 0.5),
     0 4px 16px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(0, 25, 65, 0.25),                 /* dark outer hairline */
     inset 0 1px 1px rgba(255, 255, 255, 0.65),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.16),     /* faint light catching the lower lip */
     inset 0 0 20px rgba(255, 255, 255, 0.05);
   padding: 38px 46px;
   line-height: 1.75;
+}
+
+/* Glossy Aero highlight across the top of the card. z-index -1 keeps it
+   behind the text (backdrop-filter makes the card its own stacking context). */
+.frosted-blog-card::before {
+  content: '';
+  position: absolute;
+  inset: 1px 1px auto 1px;
+  height: 34%;
+  z-index: -1;
+  border-radius: 15px 15px 50% 50% / 15px 15px 18px 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
 }
 
 /* Windows 7 Aero Header Bar inside card */
@@ -309,8 +459,11 @@ body {
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 1px 0 rgba(0, 20, 50, 0.25); /* engraved double line */
   padding-bottom: 16px;
   margin-bottom: 24px;
+  flex-wrap: wrap; /* on narrow screens the badge drops below the title instead of squashing */
+  gap: 10px 14px;
 }
 
 .card-title-group {
@@ -328,6 +481,7 @@ body {
 }
 
 .card-badge {
+  white-space: nowrap;
   background: rgba(0, 150, 255, 0.22);
   color: #e5f5ff;
   border: 1px solid rgba(130, 220, 255, 0.55);
@@ -375,22 +529,32 @@ body {
 
 /* Stub Card Minimalist Styling */
 .stub-card {
-  text-align: center;
-  padding: 50px 30px;
+  text-align: center; /* header bar stays left/right via flex; body content is centred */
 }
 
+/* Glossy gel orb holding an inline SVG icon (replaces the old OS-dependent emoji) */
 .stub-icon {
-  font-size: 3rem;
-  margin-bottom: 12px;
-  display: inline-block;
-  filter: drop-shadow(0 2px 6px rgba(0, 30, 70, 0.3));
+  display: inline-grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  margin-bottom: 14px;
+  border-radius: 50%;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 34% 26%, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 42%),
+    linear-gradient(180deg, rgba(130, 220, 255, 0.55) 0%, rgba(0, 100, 200, 0.7) 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.75);
+  box-shadow:
+    0 8px 18px rgba(0, 25, 70, 0.45),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    inset 0 -8px 12px rgba(0, 60, 140, 0.45);
 }
 
-.stub-card h2 {
-  font-size: 1.8rem;
-  color: #ffffff;
-  text-shadow: 0 1px 3px rgba(0, 20, 50, 0.8), 0 0 14px rgba(120, 215, 255, 0.4);
-  margin: 0 0 10px;
+.stub-icon svg {
+  width: 38px;
+  height: 38px;
+  filter: drop-shadow(0 1px 2px rgba(0, 30, 80, 0.7));
 }
 
 .stub-card p {
@@ -459,23 +623,31 @@ body {
    6. Footer (Natural Document Bottom Flow, Non-Persistent)
    ========================================================================== */
 
+/* Fixed Win7-style taskbar. .page-wrapper reserves --taskbar-h at the bottom. */
 .site-footer {
-  position: relative;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
   width: 100%;
-  margin-top: auto;
-  height: 52px;
+  height: var(--taskbar-h);
   z-index: 100;
-  
-  /* Aero glass footer texture */
-  background: linear-gradient(180deg, 
-    rgba(255, 255, 255, 0.28) 0%, 
-    rgba(255, 255, 255, 0.10) 15%, 
-    rgba(10, 40, 75, 0.55) 85%, 
-    rgba(5, 20, 45, 0.75) 100%);
+
+  /* Aero glass taskbar: classic split gloss (top half lighter) over the dark glass */
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0) 50%),
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.28) 0%,
+      rgba(255, 255, 255, 0.10) 15%,
+      rgba(10, 40, 75, 0.55) 85%,
+      rgba(5, 20, 45, 0.75) 100%);
   backdrop-filter: blur(24px) saturate(200%);
   -webkit-backdrop-filter: blur(24px) saturate(200%);
-  border-top: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 -2px 14px rgba(0, 20, 50, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 -2px 14px rgba(0, 20, 50, 0.3),
+    0 -1px 0 rgba(0, 25, 65, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
   
   display: flex;
   align-items: center;
@@ -552,26 +724,56 @@ body {
   background: rgba(255, 255, 255, 0.32);
 }
 
+.wallpaper-toggle-btn svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+/* The refraction toggle is hidden by glass.js where the browser can't do refraction.
+   display:flex above would otherwise beat the [hidden] attribute. */
+.wallpaper-toggle-btn[hidden] {
+  display: none;
+}
+
+/* Toggle is ON: lit like the active nav button */
+.wallpaper-toggle-btn[aria-pressed="true"] {
+  background: rgba(0, 170, 255, 0.4);
+  border-color: rgba(170, 235, 255, 0.9);
+  box-shadow: 0 0 10px var(--glass-glow-strong), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Visible keyboard focus on the remaining controls */
+.wallpaper-toggle-btn:focus-visible,
+.footer-icon-link:focus-visible,
+.back-home-btn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
 /* ==========================================================================
    7. Responsive Adaptations
    ========================================================================== */
 
 @media (max-width: 720px) {
+  /* Phones: the capsule becomes a tidy 2x2 grid (still rounded, buttons still pills) */
   .ribbon-container {
-    width: 95%;
+    width: 100%;
   }
-  
+
   .dense-glass-ribbon {
-    gap: 8px;
-    padding: 10px 12px;
-    border-radius: 12px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: min(92vw, 340px);
+    gap: 6px;
+    padding: 6px;
+    border-radius: 28px;
   }
-  
+
   .liquid-raised-btn {
-    padding: 8px 10px;
-    font-size: 0.86rem;
-    border-radius: 8px;
-    min-width: 100px;
+    width: auto;
+    padding: 9px 10px;
+    font-size: 0.88rem;
   }
   
   .content-wrapper {
@@ -583,8 +785,59 @@ body {
     border-radius: 12px;
   }
   
+  .site-footer {
+    padding: 0 12px;
+  }
+
+  /* Slimmer taskbar: keep icons + clock, drop the wordy bits */
+  .footer-brand,
+  #footer-wallpaper-name,
+  #footer-refraction-label {
+    display: none;
+  }
+
   .footer-right {
     font-size: 0.76rem;
     gap: 8px;
+  }
+
+  /* No Webamp on phones (webamp-init.js also skips loading it) */
+  #webamp-app {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   8. Accessibility preferences
+   ========================================================================== */
+
+/* Reduced motion removes real MOVEMENT only. Slow opacity dissolves and colour fades are not motion:
+   an earlier version also zeroed the wallpaper transition here, which made the wallpaper snap on
+   any machine reporting reduced motion (e.g. Windows with "Show animations" off). */
+@media (prefers-reduced-motion: reduce) {
+  .back-home-btn:hover,
+  .footer-icon-link:hover {
+    transform: none;
+  }
+}
+
+/* Reduced transparency: swap the see-through glass for near-opaque panes */
+@media (prefers-reduced-transparency: reduce) {
+  .ribbon-glass-pane {
+    background: rgba(200, 230, 247, 0.94);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .frosted-blog-card {
+    background: rgba(10, 36, 70, 0.94);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .site-footer {
+    background: rgba(8, 28, 55, 0.97);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 }

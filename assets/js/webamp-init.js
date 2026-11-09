@@ -1,26 +1,69 @@
 /* ==========================================================================
    ash777.me — Webamp Audio Player Initialization
-   Uses official captbaritone/webamp API from unpkg.com/webamp@1.4.2
+   Uses official captbaritone/webamp API (vendored bundle in assets/js/).
+
+   This file loads Webamp itself, so every page needs only this one <script> tag.
+   Phones (<= 720px) get no player and don't download it at all.
    ========================================================================== */
 
 (function () {
   'use strict';
 
+  // Keep in sync with --taskbar-h in style.css and the 720px breakpoint there.
+  const TASKBAR_H = 52;
+  const PHONE = window.matchMedia('(max-width: 720px)');
+  const WEBAMP_W = 275, WEBAMP_H = 116; // Webamp's main window size
+  const MARGIN = 16;
+  const START_VOLUME = 50; // 0-100. Not 100: a surprise track shouldn't blast speakers.
+
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = () => reject(new Error('failed to load ' + src));
+      document.head.appendChild(s);
+    });
+  }
+
+  // Webamp moves keyboard focus into its (hidden) playlist about 2 s after load, once its first
+  // track is selected. That makes a keyboard user's first Tab presses wander through the player
+  // before reaching the page. For the first 10 s, hand back any focus the visitor didn't cause
+  // (no pointer/key within 300 ms), so deliberately tabbing into the player still works.
+  function keepFocusOnPage() {
+    const t0 = performance.now();
+    let lastInput = -Infinity;
+    const stamp = () => { lastInput = performance.now(); };
+    window.addEventListener('pointerdown', stamp, true);
+    window.addEventListener('keydown', stamp, true);
+
+    const giveBack = (target) => {
+      target.blur();
+      // Chrome continues Tab from the element that just lost focus (i.e. inside the player).
+      // Briefly focusing <body> resets that starting point to the top of the page.
+      const b = document.body;
+      b.tabIndex = -1;
+      b.focus({ preventScroll: true });
+      b.removeAttribute('tabindex');
+    };
+    const root = document.getElementById('webamp'); // Webamp's own root; not necessarily inside #webamp-app
+    if (root && root.contains(document.activeElement)) giveBack(document.activeElement);
+
+    document.addEventListener('focusin', (e) => {
+      const now = performance.now();
+      if (now - t0 < 10000 && now - lastInput > 300 && e.target.closest && e.target.closest('#webamp')) {
+        giveBack(e.target);
+      }
+    });
+  }
+
   function initWebampPlayer() {
-    // Check if Webamp library is loaded
-    if (typeof window.Webamp === 'undefined') {
-      console.warn('Webamp library not yet ready, retrying in 250ms...');
-      setTimeout(initWebampPlayer, 250);
-      return;
-    }
-
     const appContainer = document.getElementById('webamp-app');
-    if (!appContainer) return;
+    if (!appContainer || typeof window.Webamp === 'undefined') return;
 
-    // Position Webamp in top-right corner (aligned with header space, avoiding nav overlap)
-    const screenWidth = window.innerWidth;
-    const posX = screenWidth > 640 ? Math.max(16, screenWidth - 295) : 10;
-    const posY = 16;
+    // Dock bottom-right, just above the fixed taskbar. Visitors can still drag it anywhere.
+    const posX = Math.max(MARGIN, window.innerWidth - WEBAMP_W - MARGIN);
+    const posY = Math.max(MARGIN, window.innerHeight - TASKBAR_H - WEBAMP_H - 12);
 
     const tracks = [
       {
@@ -75,15 +118,18 @@
 
       // Render Webamp into designated container
       webamp.renderWhenReady(appContainer).then(() => {
+        keepFocusOnPage();
+
         // Set exact top-right window positions and keep only main player open by default
         try {
           if (webamp.store && typeof webamp.store.dispatch === 'function') {
+            // Equalizer / playlist (closed by default) stack ABOVE the player, since it sits at the bottom.
             webamp.store.dispatch({
               type: "UPDATE_WINDOW_POSITIONS",
               positions: {
                 main: { x: posX, y: posY },
-                equalizer: { x: posX, y: posY + 116 },
-                playlist: { x: posX, y: posY + 232 }
+                equalizer: { x: posX, y: Math.max(0, posY - WEBAMP_H) },
+                playlist: { x: posX, y: Math.max(0, posY - WEBAMP_H * 2) }
               },
               absolute: true
             });
@@ -95,28 +141,11 @@
           console.warn('Could not set custom position:', posErr);
         }
 
-        // Unmute / Maximize audio volume
+        // Start at a moderate volume. Dispatching the store action (not media.setVolume) keeps
+        // Webamp's own volume slider in sync with the real level.
         try {
-          if (webamp.media && typeof webamp.media.setVolume === 'function') {
-            webamp.media.setVolume(100);
-          }
+          webamp.store.dispatch({ type: "SET_VOLUME", volume: START_VOLUME });
         } catch (volErr) {}
-
-        // Global AudioContext unlocker: on modern browsers, AudioContext must be resumed by user gesture
-        const unlockAudio = () => {
-          if (webamp && webamp.media && webamp.media._context) {
-            if (webamp.media._context.state === 'suspended') {
-              webamp.media._context.resume().then(() => {
-                console.log('Webamp AudioContext resumed successfully!');
-              }).catch(() => {});
-            }
-          }
-        };
-
-        window.addEventListener('click', unlockAudio, true);
-        window.addEventListener('keydown', unlockAudio, true);
-        window.addEventListener('touchstart', unlockAudio, true);
-        window.addEventListener('pointerdown', unlockAudio, true);
 
         // Ensure Track 0 (Young Girl A) is explicitly buffered and active
         try {
@@ -125,8 +154,7 @@
           }
         } catch (bufErr) {}
 
-        // Attempt autoplay per user request
-        attemptAutoplay(webamp);
+        setupAutoplay(webamp);
       }).catch(err => {
         console.error('Webamp renderWhenReady error:', err);
       });
@@ -136,44 +164,48 @@
     }
   }
 
-  function attemptAutoplay(webamp) {
-    if (!webamp || typeof webamp.play !== 'function') return;
+  // Autoplay. Browsers refuse to play sound until the visitor has interacted with the page, and
+  // Webamp's own store can't tell us whether that happened: it reports PLAYING even when the
+  // browser blocked the audio. The truth is the AudioContext: 'suspended' = blocked.
+  // So: try now; if the context is still suspended, start on the first real user activation.
+  // Resuming the context alone leaves the track silent, so play() must be sent again as well.
+  // (With zero interaction a first-time visitor can't be autoplayed; this is as early as browsers allow.)
+  function setupAutoplay(webamp) {
+    webamp.play(); // succeeds outright when the browser allows autoplay (e.g. high site engagement)
+    const ctx = webamp.media && webamp.media._context;
+    if (!ctx || ctx.state === 'running') return;
 
-    // First attempt to resume context if possible
-    if (webamp.media && webamp.media._context && webamp.media._context.state === 'suspended') {
-      webamp.media._context.resume().catch(() => {});
+    // Touch only counts as an activation on pointerup/touchend, not pointerdown.
+    const EVENTS = ['pointerdown', 'pointerup', 'keydown', 'touchend'];
+    const disarm = () => {
+      EVENTS.forEach((t) => window.removeEventListener(t, onActivate, true));
+      ctx.removeEventListener('statechange', onState);
+    };
+    const onState = () => { if (ctx.state === 'running') disarm(); };
+    function onActivate(e) {
+      // The visitor is already driving the player: leave it to them.
+      if (e.target && e.target.closest && e.target.closest('#webamp')) return disarm();
+      ctx.resume().catch(() => {});
+      webamp.play();
     }
+    EVENTS.forEach((t) => window.addEventListener(t, onActivate, true));
+    ctx.addEventListener('statechange', onState);
+  }
 
-    const playPromise = webamp.play();
-    if (playPromise && typeof playPromise.catch === 'function') {
-      playPromise.then(() => {
-        console.log('Webamp playing successfully!');
-      }).catch(err => {
-        console.log('Browser autoplay policy deferred playback. Playing on first user interaction:', err);
-
-        const startOnInteraction = () => {
-          if (webamp.media && webamp.media._context && webamp.media._context.state === 'suspended') {
-            webamp.media._context.resume().catch(() => {});
-          }
-          webamp.play().catch(() => {});
-          window.removeEventListener('click', startOnInteraction);
-          window.removeEventListener('keydown', startOnInteraction);
-          window.removeEventListener('touchstart', startOnInteraction);
-          window.removeEventListener('pointerdown', startOnInteraction);
-        };
-
-        window.addEventListener('click', startOnInteraction, { once: true });
-        window.addEventListener('keydown', startOnInteraction, { once: true });
-        window.addEventListener('touchstart', startOnInteraction, { once: true });
-        window.addEventListener('pointerdown', startOnInteraction, { once: true });
-      });
-    }
+  function boot() {
+    if (PHONE.matches) return; // no player on phones: skip the ~1 MB bundle entirely
+    // The skin data script is optional (falls back to the .wsz URL); the bundle is not.
+    loadScript('assets/skins/xmms_turquoise_data.js')
+      .catch(() => {})
+      .then(() => loadScript('assets/js/webamp.bundle.min.js'))
+      .then(initWebampPlayer)
+      .catch((err) => console.error('Webamp could not start:', err));
   }
 
   // Run on page load
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initWebampPlayer);
+    document.addEventListener('DOMContentLoaded', boot);
   } else {
-    initWebampPlayer();
+    boot();
   }
 })();

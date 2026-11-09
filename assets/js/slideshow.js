@@ -16,13 +16,18 @@
 
   let currentIndex = 0;
   let intervalTimer = null;
+  let fading = false;
   const SLIDE_DURATION = 60000; // 60 seconds (1 minute) per wallpaper
+  const FADE_MS = 1800;         // keep in sync with `transition: opacity` on .wallpaper-slide in style.css
 
-  // Preload images into browser cache so transitions are seamless
+  // Preload images into browser cache so transitions are seamless. The Image objects are kept so the
+  // browser doesn't drop the decoded data before we need it (nextWallpaper waits on decode()).
+  const preloaded = [];
   function preloadWallpapers() {
     WALLPAPERS.forEach(item => {
       const img = new Image();
       img.src = item.src;
+      preloaded.push(img);
     });
   }
 
@@ -62,6 +67,9 @@
     const layerB = document.getElementById('slide-b');
     if (!layerA || !layerB) return;
 
+    if (fading) return; // a switch pressed mid-fade would leave half-blended states: ignore it
+    fading = true;
+
     currentIndex = (currentIndex + 1) % WALLPAPERS.length;
     const nextWp = WALLPAPERS[currentIndex];
 
@@ -69,16 +77,30 @@
     const incoming = isALeading ? layerB : layerA;
     const outgoing = isALeading ? layerA : layerB;
 
-    // Load next image onto incoming layer
-    incoming.style.backgroundImage = `url('${nextWp.src}')`;
-    incoming.classList.remove('inactive');
-    incoming.classList.add('active');
+    // Start the fade only once the new image is decoded, so it never fades in a blank layer.
+    const ready = preloaded[currentIndex] && preloaded[currentIndex].decode
+      ? preloaded[currentIndex].decode().catch(() => {})
+      : Promise.resolve();
 
-    // Fade out outgoing layer
-    outgoing.classList.remove('active');
-    outgoing.classList.add('inactive');
+    ready.then(() => {
+      // The new image fades in ON TOP while the old one stays fully opaque underneath
+      // (class `leaving`). Fading both at once dips to the dark base colour mid-fade.
+      incoming.style.backgroundImage = `url('${nextWp.src}')`;
+      incoming.classList.remove('inactive');
+      incoming.classList.add('active');
 
-    updateFooterLabel();
+      outgoing.classList.remove('active');
+      outgoing.classList.add('leaving');
+
+      updateFooterLabel();
+
+      // Once the fade has finished, retire the old layer.
+      setTimeout(() => {
+        outgoing.classList.remove('leaving');
+        outgoing.classList.add('inactive');
+        fading = false;
+      }, FADE_MS + 100);
+    });
   }
 
   function updateFooterLabel() {

@@ -51,7 +51,9 @@
         if (bw > 0 && bh > 0) {
           ctx.beginPath();
           if (typeof ctx.roundRect === 'function') {
-            ctx.roundRect(bx, by, bw, bh, 10);
+            // Match the button's real corner radius (pill buttons are 999px; roundRect clamps it).
+            const r = parseFloat(getComputedStyle(btn).borderTopLeftRadius) || 10;
+            ctx.roundRect(bx, by, bw, bh, r);
           } else {
             ctx.rect(bx, by, bw, bh);
           }

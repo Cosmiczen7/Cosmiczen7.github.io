@@ -1,0 +1,6 @@
+# GitHub Pages builds this repo with Jekyll. Files listed here stay in the repo but are NOT published.
+# plan.md is the working plan for coding agents (see plan.md section 3.8).
+#
+# Don't add a .nojekyll file: that turns Jekyll off, and this exclusion stops working with it.
+exclude:
+  - plan.md
