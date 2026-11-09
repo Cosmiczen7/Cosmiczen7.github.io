@@ -3,20 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About me • ash777's website</title>
-  <link rel="stylesheet" href="assets/css/style.css?v=7">
+  <title>About me • Ash777's Website</title>
+  <link rel="stylesheet" href="assets/css/style.css?v=9">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%230099ff%22 stroke=%22white%22 stroke-width=%228%22/><circle cx=%2238%22 cy=%2236%22 r=%2216%22 fill=%22rgba(255,255,255,0.7)%22/></svg>">
 </head>
 <body>
-
-  <!-- SVG Optical Refraction Filter from liqui-design -->
-  <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
-    <filter id="button-liquid-filter" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
-      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" result="noise" />
-      <feGaussianBlur in="noise" stdDeviation="8" result="smoothedNoise" />
-      <feDisplacementMap in="SourceGraphic" in2="smoothedNoise" scale="22" xChannelSelector="R" yChannelSelector="G" />
-    </filter>
-  </svg>
 
   <!-- Windows 7 Wallpaper Slideshow Engine -->
   <div id="wallpaper-engine" aria-hidden="true">
@@ -30,14 +21,14 @@
 
     <!-- Top Title -->
     <header class="site-header">
-      <h1 class="site-title"><a href="index.html" style="color: inherit; text-decoration: none;">Welcome to ash777's website!</a></h1>
+      <h1 class="site-title"><a href="index.html">Welcome to <strong>Ash777's</strong> Website!</a></h1>
     </header>
 
     <!-- Ribbon Bar -->
     <nav class="ribbon-container" aria-label="Main Navigation">
       <div class="dense-glass-ribbon">
         <div class="ribbon-glass-pane" aria-hidden="true"></div>
-        <a href="about.html" class="liquid-raised-btn active-page">
+        <a href="about.html" class="liquid-raised-btn active-page" aria-current="page">
           <span>About me</span>
         </a>
         <a href="projects.html" class="liquid-raised-btn">
@@ -55,8 +46,13 @@
     <!-- Stub Content -->
     <main class="content-wrapper">
       <div class="frosted-blog-card stub-card">
-        <span class="stub-icon">👤</span>
-        <h2>About me</h2>
+        <div class="card-header-bar">
+          <div class="card-title-group">
+            <h2>About me</h2>
+          </div>
+          <span class="card-badge">Under construction</span>
+        </div>
+        <span class="stub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></span>
         <p>
           This page is currently under construction. A detailed bio, technical interests, and background information will be added here soon.
         </p>
@@ -64,7 +60,7 @@
       </div>
     </main>
 
-    <!-- Glass Footer -->
+    <!-- Glass Taskbar Footer -->
     <footer class="site-footer" role="contentinfo">
       <div class="footer-left">
         <span class="footer-brand">ash777.me</span>
@@ -84,18 +80,31 @@
       </div>
 
       <div class="footer-right">
-        <button id="footer-next-wallpaper" class="wallpaper-toggle-btn" type="button" title="Switch Wallpaper">
-          <span>🖼️</span>
-          <span id="footer-wallpaper-name">Aero Harmony</span>
-          <span>↻</span>
+        <!-- Glass refraction toggle: hidden until glass.js confirms the browser supports it -->
+        <button id="footer-refraction-toggle" class="wallpaper-toggle-btn" type="button" aria-pressed="true" title="Toggle glass refraction (Chrome/Edge only)" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M8 10a5 5 0 0 1 4-3"/></svg>
+          <span id="footer-refraction-label">Refraction: On</span>
         </button>
+        <!-- Manual Wallpaper Switcher Button -->
+        <button id="footer-next-wallpaper" class="wallpaper-toggle-btn" type="button" title="Switch Wallpaper">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 9"/></svg>
+          <span id="footer-wallpaper-name">Aero Harmony</span>
+          <span aria-hidden="true">↻</span>
+        </button>
+        <!-- Windows 7 Taskbar Style Clock -->
         <span id="footer-clock">12:00 PM</span>
       </div>
     </footer>
 
   </div>
 
+  <!-- Webamp Container — MUST be outside .page-wrapper for click/drag to work -->
+  <div id="webamp-app"></div>
+
   <script src="assets/js/ribbon-cutout.js"></script>
   <script src="assets/js/slideshow.js"></script>
+  <script src="assets/js/glass.js"></script>
+  <script src="assets/js/nav-swap.js"></script>
+  <script src="assets/js/webamp-init.js"></script>
 </body>
 </html>
